@@ -48,6 +48,15 @@ app.get("/api/v1/courses", (req, res) => {
 })
 
 
+// sending data according to req params
+
+app.get("/api/v1/courses/:courseId", (req, res) => {
+    const myCourse = courses.find((course) => course.id === req.params.courseId)
+    res.send(myCourse);
+})
+
+
+
 app.listen(4000, ()=> {
     console.log('server running');
 });
