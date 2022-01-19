@@ -2,9 +2,19 @@ const express = require('express');
 const YAML = require('yamljs');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = YAML.load('./swagger.yaml');
+const fileupload = require('express-fileupload');
 const app = express();
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+// to get json body in post request body parser middleware or express option
+app.use(express.json());
+
+//file uploadmiddle ware for images or other 
+app.use(fileupload());
+
+
+
 
 let courses = [
     {
@@ -55,6 +65,38 @@ app.get("/api/v1/courses/:courseId", (req, res) => {
     res.send(myCourse);
 })
 
+
+// sending data according to req params
+
+app.post("/api/v1/addcourse", (req, res) => {
+    courses.push(req.body);
+    res.send(true);
+})
+
+
+// getting data according to query params
+
+app.get("/api/v1/coursequery", (req, res) => {
+    const location = req.query.location
+    const device = req.query.device
+    res.send({location, device});
+})
+
+
+
+// upload a file name:
+
+app.post("/api/v1/uploadfile", (req, res) => {
+    console.log(req.headers);
+    const file = req.files.file
+    let path = __dirname + '/images/' + Date.now() + ".jpg"
+
+    file.mv(path, (err) => {
+        res.send(true);
+    })
+
+
+})
 
 
 app.listen(4000, ()=> {
